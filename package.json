@@ -7,8 +7,12 @@
   "scripts": {
     "start": "nodemon --inspect src/server.js",
     "sass": "sass --no-source-map --error-css src/resources/scss:src/public/css -w",
-    "format" : "prettier  --single-quote --trailing-comma all --tab-width 4 --write  \"src/**/*.{js,json,scss,css}\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "format": "lint-staged",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "src/**/*.{js,json,scss,css}": "prettier  --single-quote --trailing-comma all --tab-width 4 --write"
   },
   "author": "",
   "license": "ISC",
