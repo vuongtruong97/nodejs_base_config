@@ -42,6 +42,7 @@ route(app);
 //listen port running
 app.listen(port, (err) => {
     if (err) {
+        const test = 'test';
         console.log(err);
     }
     console.log(`Server is running on http://localhost:${port}`);
