@@ -1,0 +1,31 @@
+<div class='container mt-4 mb-4'>
+    <a class='btn btn-primary' href='videos/create'>
+        Tạo mới video
+    </a>
+    <div class='row'>
+        {{#each data}}
+            <div class='col-12 col-sm-6 col-md-4 col-lg-4 col-xl-3 mt-3'>
+                <div class='card'>
+                    <a href='/videos/{{this.slug}}'>
+                        <img
+                            class='card-img-top'
+                            src='{{this.image_url}}'
+                            alt='Card image cap'
+                        />
+                    </a>
+                    <div class='card-body'>
+                        <h5 class='card-title text-truncate'>
+                            {{this.name}}
+                        </h5>
+                        <p class='card-text text-truncate'>
+                            {{this.description}}
+                        </p>
+                        <a href='#' class='btn btn-primary'>
+                            Xem ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+</div>

@@ -1,0 +1,31 @@
+<div class='container mt-4 mb-4'>
+    <a class='btn btn-primary' href='courses/create'>
+        Tạo mới khoá học
+    </a>
+    <div class='row'>
+        {{#each courses}}
+            <div class='col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3 mt-3'>
+                <div class='card'>
+                    <a href='/courses/{{this.slug}}'>
+                        <img
+                            class='card-img-top'
+                            src='{{this.image_url}}'
+                            alt='Card image cap'
+                        />
+                    </a>
+                    <div class='card-body'>
+                        <h5 class='card-title text-truncate'>
+                            {{this.title}}
+                        </h5>
+                        <p class='card-text text-truncate'>
+                            {{this.description}}
+                        </p>
+                        <a href='#' class='btn btn-primary'>
+                            Xem ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+</div>

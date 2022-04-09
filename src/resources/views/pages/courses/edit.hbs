@@ -1,0 +1,55 @@
+<div class='container mt-5 mb-5'>
+    <h2>
+        Sửa khoá học
+    </h2>
+    <div class='row'>
+        <div class='col-12 col-md-6 col-lg-6'>
+            <form method='POST' action='/courses/store'>
+                <div class='form-group'>
+                    <label for='title'>
+                        Tên khoá học
+                    </label>
+                    <input
+                        type='text'
+                        class='form-control'
+                        placeholder=' Tên khoá học'
+                        value='{{course.title}}'
+                        id='title'
+                        name='title'
+                        required
+                    />
+                </div>
+                <div class='form-group'>
+                    <label for='description'>
+                        Mô tả khoá học
+                    </label>
+                    <textarea
+                        class='form-control'
+                        id='description'
+                        name='description'
+                        required
+                    >
+                        {{course.description}}
+                    </textarea>
+                </div>
+                <div class='form-group'>
+                    <label for='video'>
+                        Video Youtube Id
+                    </label>
+                    <input
+                        type='text'
+                        class='form-control'
+                        placeholder='Video Youtube Id'
+                        value='{{course.video}}'
+                        id='video'
+                        name='video'
+                        required
+                    />
+                </div>
+                <button type='submit' class='btn btn-primary'>
+                    Lưu khoá học
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

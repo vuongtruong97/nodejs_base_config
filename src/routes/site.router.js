@@ -8,8 +8,9 @@ siteRouter.use((req, res, next) => {
     next();
 });
 
-siteRouter.use('/search', SiteController.search);
-siteRouter.use('/contact', SiteController.contact);
-siteRouter.use('/', SiteController.home);
+siteRouter.get('/search', SiteController.search);
+siteRouter.post('/search', SiteController.update);
+siteRouter.get('/blog', SiteController.blog);
+siteRouter.get('/', SiteController.home);
 
 export default siteRouter;

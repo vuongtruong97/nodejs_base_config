@@ -5,17 +5,21 @@ import route from './routes/index.js';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import morgan from 'morgan';
-
+import connectDb from './config/db/index.js';
 const app = express();
 
 //define port
 const port = dotenv.config().parsed.PORT || 1997;
 
+//connect to db
+
+connectDb();
+
 //define dir folder path
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 //set static dirs
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(path.join(__dirname, 'public')));
 // define body parser
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -29,12 +33,16 @@ app.engine(
     engine({
         extname: '.hbs',
         defaultLayout: 'main',
-        layoutsDir: __dirname + '/resources/views/layouts',
-        partialsDir: __dirname + '/resources/views/partials',
+        helpers: {
+            sum: (a, b) => a + b,
+            capitalize: (string) => string.toUpperCase(),
+        },
+        layoutsDir: path.join(__dirname, 'resources', 'views', 'layouts'),
+        partialsDir: path.join(__dirname, 'resources', 'views', 'partials'),
     }),
 );
 app.set('view engine', 'hbs');
-app.set('views', path.join(__dirname, '/resources/views/pages'));
+app.set('views', path.join(__dirname, 'resources', 'views/pages'));
 
 //routes
 route(app);
