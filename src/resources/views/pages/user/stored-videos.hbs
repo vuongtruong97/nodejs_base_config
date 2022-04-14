@@ -1,0 +1,321 @@
+<div class='container'>
+    <h1 class='m-4 text-center'>
+        Danh sách Videos
+    </h1>
+    <div class='d-flex justify-content-center'>
+
+        <a
+            href='#'
+            data-toggle='modal'
+            data-target='#createVideoModal'
+            class='btn btn-primary m-3'
+        >
+            <i class='fa-solid fa-plus'></i>
+            Thêm video
+        </a>
+        <a href='/user/recycle-bin/videos' class='btn btn-primary m-3'>
+            <i class='fa-solid fa-trash'></i>
+            Thùng rác ({{deletedVideos}})
+        </a>
+    </div>
+    <div
+        class='d-flex align-items-center justify-content-center flex-column mt-2 mb-2'
+    >
+        <form class='row' method='POST' action='/videos/handle-form-action'>
+            <div class='form-row align-items-center'>
+                <div class='col-auto my-1'>
+                    <div class='custom-control custom-checkbox mr-sm-2'>
+                        <input
+                            type='checkbox'
+                            class='custom-control-input'
+                            id='checkbox-all'
+                        />
+                        <label
+                            class='custom-control-label'
+                            for='checkbox-all'
+                        >Chọn tất cả</label>
+                    </div>
+                </div>
+                <div class='col-auto my-1'>
+                    <select
+                        class='custom-select mr-sm-2'
+                        name='action'
+                        required
+                    >
+                        <option value=''>Lựa chọn...</option>
+                        <option value='delete'>Xoá</option>
+                    </select>
+                </div>
+
+                <div class='col-auto my-1'>
+                    <button
+                        type='submit'
+                        class='btn btn-primary submit-btn'
+                        disabled
+                    >Thực hiện</button>
+                </div>
+            </div>
+            <table class='table'>
+                <thead>
+                    <tr>
+                        <th scope='col' class='text-center'>
+                            #
+                        </th>
+                        <th scope='col'>
+                            Tên video
+                            {{sortable 'name' _sort}}
+                        </th>
+                        <th scope='col'>
+                            Mô tả video
+                            {{sortable 'description' _sort}}
+                        </th>
+                        <th scope='col'>
+                            Thời gian tạo
+                            {{sortable 'createdAt' _sort}}
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each videos}}
+                        <tr>
+
+                            <th
+                                scope='row'
+                                class='d-flex align-items-center justify-content-center'
+                            >
+                                <input
+                                    type='checkbox'
+                                    class='mr-1'
+                                    name='videoIds[]'
+                                    value='{{this._id}}'
+                                />
+                                {{sum @index 1}}
+
+                            </th>
+                            <td>
+                                {{this.name}}
+
+                            </td>
+                            <td>
+                                {{this.slug}}
+
+                            </td>
+                            <td>
+                                {{this.createdAt}}
+                            </td>
+                            <td>
+                                <a href='/videos/{{this._id}}/edit'>
+                                    <i class='fa-solid fa-pen-to-square'></i>
+                                    Sửa
+                                </a>
+                                <a
+                                    href=''
+                                    data-toggle='modal'
+                                    data-target='#delete-video-confirm'
+                                    data-video-id={{this._id}}
+                                >
+                                    <i class='fa-solid fa-delete-left'></i>
+                                    Xoá
+                                </a>
+                            </td>
+                        </tr>
+                    {{else}}
+                        <tr>
+                            <td class='text-center' colspan='5'><h5>Bạn chưa lưu
+                                    video nào :((<a
+                                        class='ml-4'
+                                        href='/videos/create'
+                                    >Thêm mới video</a></h5>
+                            </td>
+                        </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </form>
+    </div>
+
+</div>
+{{! Modal Delete Confirm }}
+<!-- Button trigger modal -->
+
+<!-- Modal -->
+<div
+    class='modal fade'
+    id='delete-video-confirm'
+    tabindex='-1'
+    role='dialog'
+    aria-labelledby='delete-video-confirmLabel'
+    aria-hidden='true'
+>
+    <div class='modal-dialog' role='document'>
+        <div class='modal-content'>
+            <div class='modal-header'>
+                <h5 class='modal-title' id='delete-video-confirmLabel'>
+                    Xoá video này?
+                </h5>
+                <button
+                    type='button'
+                    class='close'
+                    data-dismiss='modal'
+                    aria-label='Close'
+                >
+                    <span aria-hidden='true'>
+                        &times;
+                    </span>
+                </button>
+            </div>
+            <div class='modal-body'>
+                Bạn có muốn xoá video này?
+            </div>
+            <div class='modal-footer'>
+                <button
+                    type='button'
+                    class='btn btn-secondary'
+                    data-dismiss='modal'
+                >
+                    Huỷ bỏ
+                </button>
+                <button
+                    id='deletaVideoBtn'
+                    type='button'
+                    class='btn btn-primary'
+                >
+                    Xác nhận
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<form id='formDelete' method='POST'>
+
+</form>
+<!-- Modal create video -->
+<div
+    class='modal fade'
+    id='createVideoModal'
+    tabindex='-1'
+    role='dialog'
+    aria-labelledby='createVideoModalTitle'
+    aria-hidden='true'
+>
+    <div class='modal-dialog modal-dialog-centered' role='document'>
+        <div class='modal-content'>
+            <form method='POST' action='/videos/store'>
+                <div class='modal-header'>
+                    <h5 class='modal-title' id='exampleModalLongTitle'>Thêm
+                        video</h5>
+                    <button
+                        type='button'
+                        class='close'
+                        data-dismiss='modal'
+                        aria-label='Close'
+                    >
+                        <span aria-hidden='true'>&times;</span>
+                    </button>
+                </div>
+                <div class='modal-body'>
+                    <div class='col-12'>
+                        <div class='form-group'>
+                            <label for='title'>
+                                Tên video
+                            </label>
+                            <input
+                                type='text'
+                                class='form-control'
+                                placeholder=' Tên video'
+                                id='title'
+                                name='name'
+                                required
+                            />
+                        </div>
+                        <div class='form-group'>
+                            <label for='description'>
+                                Mô tả video
+                            </label>
+                            <input
+                                type='text'
+                                class='form-control'
+                                placeholder='Mô tả video'
+                                id='description'
+                                name='description'
+                                required
+                            />
+                        </div>
+                        <div class='form-group'>
+                            <label for='video'>
+                                Video Youtube Id
+                            </label>
+                            <input
+                                type='text'
+                                class='form-control'
+                                placeholder='Video Youtube Id'
+                                id='video'
+                                name='videoId'
+                                required
+                            />
+                        </div>
+
+                    </div>
+                </div>
+                <div class='modal-footer'>
+                    <button
+                        type='button'
+                        class='btn btn-secondary'
+                        data-dismiss='modal'
+                    >Close</button>
+                    <button type='submit' class='btn btn-primary'>
+                        Tạo video
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+{{! prettier-ignore }}
+<script>
+     window.onload = function() {
+        $('#delete-video-confirm').on('show.bs.modal',function (event) {
+        var modal = $(this);
+        var formDel = document.getElementById('formDelete');
+        var button = $(event.relatedTarget); 
+        var videoId = button.data('video-id') ; 
+        var deleteBtn = document.getElementById('deletaVideoBtn');
+        deleteBtn.onclick = () => {
+        console.log(formDel);
+        formDel.action='/videos/'+ videoId+ '?_method=DELETE';
+        formDel.submit();
+        }});
+
+     //handle form checked all
+     const listCheckboxItem = $('input[name="videoIds[]"]');
+     const allCheckBox = $('#checkbox-all');
+     const submitBtn = $('.submit-btn');
+
+     allCheckBox.change(function () {
+         var isCheckedAll = $(this).prop('checked');
+         listCheckboxItem.prop('checked', isCheckedAll);
+        setSubmitBtnState();
+        });
+
+
+     listCheckboxItem.change(function () {
+         var isCheckedAll =  $('input[name="videoIds[]"]:checked').length === listCheckboxItem.length;
+         setSubmitBtnState();
+         allCheckBox.prop('checked', isCheckedAll);
+     })
+
+
+     function setSubmitBtnState() {
+         var listCheckedItemLength = $('input[name="videoIds[]"]:checked').length;
+        if(listCheckedItemLength){
+                submitBtn.removeAttr('disabled');
+        } else {
+                submitBtn.attr('disabled','disabled');
+
+        }
+     }
+     };
+     
+</script>

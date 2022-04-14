@@ -14,16 +14,6 @@ class SiteController {
             res.render('home', { courses });
         });
     }
-    // [GET] /blog
-    async blog(req, res, next) {
-        // use async await
-        try {
-            const blogs = await BlogModel.find().lean();
-            res.render('blog', { blogs });
-        } catch (err) {
-            next(err);
-        }
-    }
     // [GET] /search
     search(req, res) {
         console.log(req.body);
@@ -45,6 +35,10 @@ class SiteController {
         });
 
         res.send(`<h1>uppdate</h1>`);
+    }
+    // [GET] /login
+    login(req, res, next) {
+        res.render('login-register/login');
     }
 }
 

@@ -1,0 +1,151 @@
+<div class='container'>
+    <h1>Khoá học đã xoá</h1>
+    <div class='col12 m-3'>
+        <a href='/user/stored/courses' class='btn btn-primary'>Quay lại trang
+            quản lý khoá học</a>
+    </div>
+    <form
+        name='handle-form-actions'
+        method='POST'
+        action='/courses/handle-form-actions'
+    >
+        <div class='mt-3 mb-3'>
+            <input type='checkbox' id='checkAll' />
+            <label for='checkAll'>Chọn tất cả</label>
+            <select
+                class='custom-select col-2 ml-2'
+                name='action'
+                required='true'
+            >
+                <option value=''>Chọn hành động</option>
+                <option value='recycle'>Khôi phục</option>
+                <option value='wipe'>Xoá vĩnh viễn</option>
+            </select>
+            <button
+                class='btn btn-primary ml-2'
+                id='submitFormActionBtn'
+                type='submit'
+                disabled
+            >Thực hiện</button>
+        </div>
+        <table class='table'>
+            <thead>
+                <tr>
+                    <th scope='col'>#</th>
+                    <th scope='col'>Tên khoá học
+                        {{sortable 'title' _sort}}
+                    </th>
+                    <th scope='col'>Thời gian xoá
+                        {{sortable 'deletedAt' _sort}}
+                    </th>
+
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each deleteCourses}}
+                    <tr>
+                        <td>
+                            <input
+                                type='checkbox'
+                                name='courseIds[]'
+                                value={{this._id}}
+                            />
+                            {{@index}}
+                        </td>
+                        <td>{{this.title}}</td>
+                        <td>{{this.deletedAt}}</td>
+                        <td>
+                            <a
+                                href='#'
+                                class='recycleBtn'
+                                data-courseId='{{this._id}}'
+                            >Khôi phục</a>
+
+                        </td>
+                        <td>
+                            <a
+                                href='#'
+                                class='wipeBtn'
+                                data-courseId='{{this._id}}'
+                            >Xoá vĩnh viễn</a></td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </form>
+</div>
+
+{{! hiden form }}
+<form id='hiden-form' method='POST'></form>
+
+{{! prettier-ignore }}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const formActions = document.forms['handle-form-actions'];
+    const checkBoxAllBtn = $('#checkAll');
+    const checkBoxItems = $('input[name="courseIds[]"]');
+    const formActionsSubmitBtn = $('#submitFormActionBtn');
+    const hiddenForm = $('#hiden-form');
+    const listRecycleBtn = $('.recycleBtn');
+    const listWipeBtn = $('.wipeBtn')
+
+    //handle listWipeBtn onclick
+    listWipeBtn.click((e) => {
+        e.preventDefault();
+        const courseTargetId = e.target.dataset.courseid;
+        hiddenForm.attr('action',`/courses/${courseTargetId}/wipe_method=POST`);
+        {{!-- hiddenForm.submit(); --}}
+        console.log(courseTargetId);
+
+
+    }) 
+
+    //handle listRecycle onclick
+    listRecycleBtn.click((e) => {
+        e.preventDefault();
+        const courseTargetId = e.target.dataset.courseid;
+        hiddenForm.attr('action', `/courses/${courseTargetId}/recycle?_method=PATCH`);
+        console.log(hiddenForm);
+        hiddenForm.submit();
+    });
+
+    //handle checkAllBtn on change
+    checkBoxAllBtn.change(() => {
+        let isCheckAll = checkBoxAllBtn.prop('checked');
+        checkBoxItems.prop('checked', isCheckAll);
+         submitBtnState();
+    })
+    //handle checkItems on change
+    checkBoxItems.change(() => {
+        let isCheckAll = checkBoxItems.length === $('input[name="courseIds[]"]:checked').length;
+        checkBoxAllBtn.prop('checked',isCheckAll);
+         submitBtnState();
+    })
+    
+    //handle SubmitBtn state
+    function submitBtnState() {
+        let enable = $('input[name="courseIds[]"]:checked').length;
+        if(enable) {
+            formActionsSubmitBtn.attr('disabled', false);
+        } else {
+            formActionsSubmitBtn.attr('disabled', true);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}); 
+</script>

@@ -1,0 +1,231 @@
+<div class='container'>
+    <h1 class='m-3 text-center'>
+        Videos đã xoá
+    </h1>
+
+    <div class='d-flex justify-content-center'>
+        <a
+            href='#'
+            data-toggle='modal'
+            data-target='#restore-video-confirm'
+            data-mes='khôi phục tất cả'
+            class='btn btn-primary m-3 recyleAllBtn'
+        >
+            Khôi phục tất cả
+        </a>
+        <a href='/user/stored/videos' class='btn btn-primary m-3'>
+            Quay lại trang quản lý videos
+        </a>
+    </div>
+    <form name='actions-form' action='POST' action='/videos/handle-form-action'>
+        <div class='d-flex align-items-center m-3'>
+            <div class='d-flex justify-content-center align-items-center'>
+                <input id='checkbox-all' type='checkbox' />
+                <label class='mb-0 ml-2' for='checkbox-all'>Chọn tất cả</label>
+            </div>
+            <select
+                class='custom-select mr-sm-2 col-2 ml-2'
+                name='action'
+                required
+            >
+                <option value=''>Chọn hành động</option>
+                <option value='recycle'>Khôi phục</option>
+                <option value='wipe'>Xoá vĩnh viễn</option>
+            </select>
+            <button
+                class='btn btn-primary submitActionsBtn'
+                type='submit'
+                disabled
+            >Thực hiện</button>
+        </div>
+        <table class='table'>
+            <thead>
+                <tr>
+                    <th scope='col'>
+                        STT
+                    </th>
+                    <th scope='col'>
+                        Tên video
+                        {{sortable 'name' _sort}}
+                    </th>
+
+                    <th scope='col'>
+                        Thời gian xoá
+                        {{sortable 'deletedAt' _sort}}
+
+                    </th>
+                    <th>
+                        Tuỳ chọn
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each listDelete}}
+                    <tr>
+
+                        <th scope='row'>
+                            <input
+                                name='videoIds[]'
+                                value='{{this._id}}'
+                                type='checkbox'
+                            />
+                            {{sum @index 1}}
+                        </th>
+                        <td>
+                            {{this.name}}
+                        </td>
+
+                        <td>
+                            {{this.deletedAt}}
+                        </td>
+                        <td>
+                            <a
+                                class='mr-2 recycleBtn'
+                                href=''
+                                data-video-id={{this._id}}
+                            >
+                                <i class='fa-solid fa-recycle'></i>
+                                Khôi phục
+                            </a>
+                            <a
+                                href=''
+                                data-toggle='modal'
+                                data-target='#restore-video-confirm'
+                                data-video-id={{this._id}}
+                                data-mes='xoá vĩnh viễn'
+                            >
+                                <i class='fa-solid fa-ban'></i>
+                                Xoá vĩnh viễn
+                            </a>
+                        </td>
+                    </tr>
+                {{else}}
+                    <tr>
+                        <td class='text-center' colspan='5'><h5>Thùng rác trống
+                                <a class='ml-4' href='/user/stored/videos'>Quay
+                                    lại trang quản lý video</a></h5>
+                        </td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </form>
+
+</div>
+{{! Modal Delete Confirm }}
+<!-- Button trigger modal -->
+<!-- Modal -->
+<div
+    class='modal fade'
+    id='restore-video-confirm'
+    tabindex='-1'
+    role='dialog'
+    aria-labelledby='restore-video-confirmLabel'
+    aria-hidden='true'
+>
+    <div class='modal-dialog' role='document'>
+        <div class='modal-content'>
+            <div class='modal-header'>
+                <h5 class='modal-title' id='restore-video-confirmLabel'>
+                    Thông báo
+                </h5>
+                <button
+                    type='button'
+                    class='close'
+                    data-dismiss='modal'
+                    aria-label='Close'
+                >
+                    <span aria-hidden='true'>
+                        &times;
+                    </span>
+                </button>
+            </div>
+            <div class='modal-body'>
+
+            </div>
+            <div class='modal-footer'>
+                <button
+                    type='button'
+                    class='btn btn-secondary'
+                    data-dismiss='modal'
+                >
+                    Huỷ bỏ
+                </button>
+                <button
+                    id='restoreVideoBtn'
+                    type='button'
+                    class='btn btn-primary'
+                >
+                    Xác nhận
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{! form-action-one }}
+<form id='formAction' method='POST'>
+</form>
+
+{{! prettier-ignore }}
+<script>
+    window.onload = function() {
+        const modalBody = document.querySelector('.modal-body');
+        var formAction = document.getElementById('formAction'); // form action one
+        const listBtn = document.querySelectorAll('.recycleBtn');
+        const recycleAllBtn = document.querySelector('.recyleAllBtn');
+        const formActions = document.forms['actions-form']; //form actions multi
+        const btnActionsSubmit = $('.submitActionsBtn');
+        const checkboxAll = $('#checkbox-all');
+        const listCheckbox = $('input[name="videoIds[]"]');
+        checkboxAll.change(function () {
+            var isCheckAll = $(this).prop('checked');
+            listCheckbox.prop('checked', isCheckAll);
+            setbtnActionsSubmitState();
+        })
+        listCheckbox.change(function () {
+            var isCheckAll = listCheckbox.length === $('input[name="videoIds[]"]:checked').length;
+            checkboxAll.prop('checked',isCheckAll);
+            setbtnActionsSubmitState();
+        })
+        function setbtnActionsSubmitState() {
+            var enable = $('input[name="videoIds[]"]:checked').length;
+            if(enable) {
+                btnActionsSubmit.removeAttr('disabled');
+            } else {
+                btnActionsSubmit.attr('disabled','disabled');
+            }
+        }
+
+        listBtn.forEach(btn => {
+            btn.addEventListener('click',(e) => {
+                e.preventDefault();
+                 formAction.action='/videos/'+btn.getAttribute('data-video-id')+ '/recycle?_method=PATCH';
+                 formAction.submit();
+
+            })
+        })
+        $('#restore-video-confirm').on('show.bs.modal',function (event) {
+        var modal = $(this);
+        var button = $(event.relatedTarget); 
+        var videoId = button.data('video-id'); 
+        var message = button.data('mes');
+        modalBody.innerText = `Bạn có muốn ${message} ?`;
+        var confirmBtn = document.getElementById('restoreVideoBtn');
+        confirmBtn.onclick = () => {
+            if(message === 'khôi phục tất cả') {
+                formAction.action = '/videos/recycle-all?_method=PATCH';
+                 formAction.submit();
+            } else {
+                console.log(formAction);
+                formAction.action='/videos/'+ videoId+ '/wipe-data?_method=DELETE';
+                formAction.submit();
+            }
+        
+            }
+    
+        }
+    
+    )
+};
+</script>

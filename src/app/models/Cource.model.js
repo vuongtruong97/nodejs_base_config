@@ -1,7 +1,9 @@
 import mongoose from 'mongoose';
 import slug from 'mongoose-slug-generator';
+import mongooseDelete from 'mongoose-delete';
 
 mongoose.plugin(slug);
+
 const Schema = mongoose.Schema;
 
 const CourseSchema = new Schema(
@@ -12,8 +14,25 @@ const CourseSchema = new Schema(
         video: { type: String, required: true },
         slug: { type: String, slug: 'title' },
     },
-    { timestamps: true },
+    { timestamps: true }
 );
+CourseSchema.plugin(mongooseDelete, {
+    overrideMethods: true,
+    deletedAt: true,
+    validateBeforeDelete: true,
+    indexFields: 'all',
+});
+CourseSchema.query.sortable = function (res) {
+    const isValidType = ['desc', 'asc'].includes(res.locals._sort.type);
+    if (res.locals?._sort.enable) {
+        return this.sort({
+            [res.locals._sort.column]: isValidType
+                ? res.locals._sort.type
+                : 'desc',
+        });
+    }
+    return this;
+};
 
 const CourseModel = mongoose.model('Course', CourseSchema);
 

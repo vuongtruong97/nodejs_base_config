@@ -1,40 +1,6 @@
 <div class='container mt-5 mb-5'>
     <div class='row'>
-        <div
-            class='col-12 col-md-6 col-lg-6'
-            style='height: 40vh; overflow-x: scroll'
-        >
-            <table class='table'>
-                <thead>
-                    <tr>
-                        <th scope='col'>
-                            Title
-                        </th>
-                        <th scope='col'>
-                            Slug
-                        </th>
-                        <th scope='col'>
-                            videoId
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#each courses}}
-                        <tr>
-                            <td>
-                                {{this.title}}
-                            </td>
-                            <td>
-                                {{this.slug}}
-                            </td>
-                            <td>
-                                {{this.video}}
-                            </td>
-                        </tr>
-                    {{/each}}
-                </tbody>
-            </table>
-        </div>
+
         <div class='col-12 col-md-6 col-lg-6'>
             <form method='POST' action='/videos/store'>
                 <div class='form-group'>

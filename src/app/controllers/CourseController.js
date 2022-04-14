@@ -7,14 +7,15 @@ import {
 class CourseController {
     // [GET] /
     async index(req, res, next) {
-        const courses = multipleMongooseToObject(await CourseModel.find());
+        let coursesQuery = CourseModel.find();
+        const courses = multipleMongooseToObject(await coursesQuery);
         res.render('courses/course', { courses });
     }
     //[GET] /:slug
     async detail(req, res, next) {
         try {
             const course = mongooseToObject(
-                await CourseModel.findOne({ slug: req.params.slug }),
+                await CourseModel.findOne({ slug: req.params.slug })
             );
             res.render('courses/detail', { course });
         } catch (err) {
@@ -26,33 +27,64 @@ class CourseController {
         const course = mongooseToObject(
             await CourseModel.findById({
                 _id: req.params.id,
-            }),
+            })
         );
         res.render('courses/edit', { course });
         // res.json({ editCourse });
     }
-    // [GET] /create
-    async create(req, res, next) {
-        try {
-            const courses = await CourseModel.find().lean();
-
-            res.render('courses/create', { courses });
-        } catch (err) {
-            next(err);
-        }
+    // [PUT] /courses/:id
+    async update(req, res, next) {
+        req.body.image_url = `https://img.youtube.com/vi/${req.body.video}/sddefault.jpg`;
+        await CourseModel.updateOne({ _id: req.params.id }, req.body);
+        res.redirect('/user/stored/courses');
     }
     // [POST] /courses/store
     async store(req, res, next) {
-        const formData = req.body;
-
         //add image_url to formData width video Id
-        formData.image_url = `https://img.youtube.com/vi/${req.body.video}/sddefault.jpg`;
-
-        const new_course = new CourseModel(formData);
-        new_course.save();
-        const courses = await CourseModel.find().lean();
-        res.render('courses/create', { courses });
+        req.body.image_url = `https://img.youtube.com/vi/${req.body.video}/sddefault.jpg`;
+        const new_course = new CourseModel(req.body);
+        await new_course.save();
+        res.redirect('back');
     }
+    // [DELETE] /
+    async delete(req, res, next) {
+        try {
+            await CourseModel.delete({ _id: req.params.id });
+            res.redirect('back');
+        } catch (err) {
+            const message = err;
+            res.render('error', { message });
+        }
+    }
+    // [POST] /courses/handle-form-actions
+    async handleFormActions(req, res, next) {
+        switch (req.body.action) {
+            case 'recycle':
+                await CourseModel.restore({ _id: { $in: req.body.courseIds } });
+                res.redirect('back');
+                break;
+            case 'delete':
+                await CourseModel.delete({ _id: { $in: req.body.courseIds } });
+                res.redirect('back');
+                break;
+            case 'wipe':
+                await CourseModel.deleteMany({
+                    _id: { $in: req.body.courseIds },
+                });
+                res.redirect('back');
+                break;
+            default:
+                console.log('no change');
+                res.redirect('back');
+        }
+    }
+    // [PATCH] /courses/:id/recycle
+    async recycle(req, res, next) {
+        await CourseModel.restore({ _id: req.params.id });
+        res.redirect('back');
+    }
+
+    // [POST] /courses/??
 }
 
 export default new CourseController();

@@ -1,34 +1,34 @@
 <div class='container mt-5 mb-5'>
     <h2>
-        Sửa khoá học
+        Sửa video
     </h2>
     <div class='row'>
         <div class='col-12'>
-            <form method='POST' action='/courses/{{course._id}}?_method=PUT'>
+            <form method='POST' action='/videos/{{video._id}}?_method=PUT'>
                 <div class='form-group'>
                     <label for='title'>
-                        Tên khoá học
+                        Tên video
                     </label>
                     <input
                         type='text'
                         class='form-control'
-                        placeholder=' Tên khoá học'
-                        value='{{course.title}}'
+                        placeholder=' Tên video'
+                        value='{{video.name}}'
                         id='title'
-                        name='title'
+                        name='name'
                         required
                     />
                 </div>
                 <div class='form-group'>
                     <label for='description'>
-                        Mô tả khoá học
+                        Mô tả video
                     </label>
                     <textarea
                         class='form-control'
                         id='description'
                         name='description'
                         required
-                    >{{course.description}}
+                    >{{video.description}}
                     </textarea>
                 </div>
                 <div class='form-group'>
@@ -39,14 +39,14 @@
                         type='text'
                         class='form-control'
                         placeholder='Video Youtube Id'
-                        value='{{course.video}}'
+                        value='{{video.videoId}}'
                         id='video'
-                        name='video'
+                        name='videoId'
                         required
                     />
                 </div>
                 <button type='submit' class='btn btn-primary'>
-                    Lưu khoá học
+                    Lưu video
                 </button>
             </form>
         </div>
